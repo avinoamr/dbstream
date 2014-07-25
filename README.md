@@ -5,7 +5,7 @@ DatabaseStream API for creating abstract, portable and functional Node streams f
 
 > Due to the massive fragmentation of Node libraries for accessing different databases, it's difficult to write elegant code that is fully portable across database systems. This API has been designed to encourage similarity between Node modules that are used to access databases. Inspired by [PEP 249](http://legacy.python.org/dev/peps/pep-0249/)
 
-#### Usage
+### Usage
 
 This example shows the effectiveness of using Node streams, and the functional, stream-lined API of the `dbstream` API.
 
@@ -28,10 +28,9 @@ new connect.Cursor()
 
 ###### Insert
 
-Inserting documents involves calling the `write` for each object you wish to write to the database. Once done, call the `end()` method to indicate that no more writes are required. Once everything is saved, the `finish` event will be triggered:
+Inserting objects involves calling the `write` for each object you wish to write to the database. Once done, call the `end()` method to indicate that no more writes are required. Once everything is saved, the `finish` event will be triggered:
 
 ```javascript
-var cursor = new connect.Cursor();
 cursor.write({ name: "Hello" });
 cursor.write({ name: "World" });
 cursor.on("finish", function() {
@@ -40,7 +39,43 @@ cursor.on("finish", function() {
 cursor.end()
 ```
 
-#### Cursor
+###### Upsert
+
+Updating objects is exactly the same as inserting, except that the object contains an `id` field which will cause the operation to be an upsert:
+
+```javascript
+cursor.write({ id: 1, name: "Hello" });
+cursor.write({ id: 1, name: "World" });
+cursor.end(); // just one object will be saved, "World" will override "Hello"
+```
+
+###### Remove
+
+Similarily, the `remove` command can be used to remove objects:
+
+```javascript
+cursor.remove({ id: 1 });
+cursor.on( "finish", function() {
+  console.log( "ID: 1 was removed" );
+});
+cursor.end();
+```
+
+###### Read
+
+Reading objects from the database involves defining the query parameters, and then reading the results:
+
+
+```javascript
+cursor.find({ name: "Hello" }).sort( "id" ).skip(1).limit(1);
+cursor.on("data", console.log );
+cursor.on( "end", function() {
+  console.log( "Done reading" );
+});
+```
+
+
+### Cursor
 
 Cursors provide the core functionality of the API. They are simply [Node Streams](http://nodejs.org/api/stream.html#stream_class_stream_duplex) that expose an API for defining a Database operation in a DB-agnostic manner:
 
