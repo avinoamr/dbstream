@@ -1,7 +1,9 @@
 dbstream
 ========
 
-DatabaseStream API for creating abstract, portable and functional Node streams for accessing databases
+DatabaseStream API for creating abstract, portable and functional Node streams for accessing databases.
+
+> Due to the massive fragmentation of Node libraries for accessing different databases, it's difficult to write elegant code that is fully portable across database systems. This API has been designed to encourage similarity between Node modules that are used to access databases. Inspired by [PEP 249](http://legacy.python.org/dev/peps/pep-0249/)
 
 #### Example
 
