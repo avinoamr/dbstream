@@ -12,7 +12,7 @@ This example shows the effectiveness of using Node streams, and the functional, 
 ```javascript
 var db = require( "dbstream-somedb" );
 var es = require( "event-stream" );
-var connection = db.connect();
+var connection = db.connect( /* settings */ );
 
 var cursor = new connect.Cursor(); 
 cursor.write({ id: 1, name: "Hello", i: 0 }) // upsert where id == 1
@@ -23,7 +23,8 @@ new connect.Cursor()
   .find({}) // query for everything
   .limit(10)
   
-  // because Cursors are just Streams, they can be piped together to construct a functional data-processing pipeline
+  // because Cursors are just Streams, they can be piped together
+  // to construct a functional data-processing pipeline
   .pipe(es.map(function( obj ) {
     obj.i += 1;
     return obj;
@@ -37,7 +38,7 @@ new connect.Cursor()
 
 #### Cursor
 
-The Cursor is a Node Duplex Stream that represents a database cursor or a single database operation
+Cursors provide the core functionality of the API. They are simply [Node Streams](http://nodejs.org/api/stream.html#stream_class_stream_duplex) that expose an API for defining a Database operation in a DB-agnostic manner:
 
 ###### .find(query)
 
