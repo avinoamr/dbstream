@@ -7,10 +7,32 @@ DatabaseStream API for creating abstract, portable and functional Node streams f
 
 #### Example
 
+This example shows the effectiveness of using Node streams, and the functional, stream-lined API of the `dbstream` API.
+
 ```javascript
 var db = require( "dbstream-somedb" );
-
+var es = require( "event-stream" );
 var connection = db.connect();
+
+var cursor = new connect.Cursor(); 
+cursor.write({ id: 1, name: "Hello", i: 0 }) // upsert where id == 1
+cursor.write({ name: "World", i: 0 } // insert
+cursor.on( "error", console.error ).end();
+
+new connect.Cursor()
+  .find({}) // query for everything
+  .limit(10)
+  
+  // because Cursors are just Streams, they can be piped together to construct a functional data-processing pipeline
+  .pipe(es.map(function( obj ) {
+    obj.i += 1;
+    return obj;
+  })
+  .pipe( new connect.Cursor() ); // write the changes back to the database with a new cursor
+  .on( "finish", function() {
+    console.log( "Done. Everything was saved." );
+  })
+  .end();
 ```
 
 #### Cursor
