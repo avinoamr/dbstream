@@ -5,35 +5,39 @@ DatabaseStream API for creating abstract, portable and functional Node streams f
 
 > Due to the massive fragmentation of Node libraries for accessing different databases, it's difficult to write elegant code that is fully portable across database systems. This API has been designed to encourage similarity between Node modules that are used to access databases. Inspired by [PEP 249](http://legacy.python.org/dev/peps/pep-0249/)
 
-#### Example
+#### Usage
 
 This example shows the effectiveness of using Node streams, and the functional, stream-lined API of the `dbstream` API.
 
 ```javascript
 var db = require( "dbstream-somedb" );
-var es = require( "event-stream" );
 var connection = db.connect( /* settings */ );
 
+// write data
 var cursor = new connect.Cursor(); 
-cursor.write({ id: 1, name: "Hello", i: 0 }) // upsert where id == 1
-cursor.write({ name: "World", i: 0 } // insert
-cursor.on( "error", console.error ).end();
+cursor.write({ name: "Hello" }) // upsert where id == 1
+cursor.write({ name: "World" } // insert
+cursor.end();
 
+// read data
 new connect.Cursor()
-  .find({}) // query for everything
+  .find({ name: "Hello" })
   .limit(10)
-  
-  // because Cursors are just Streams, they can be piped together
-  // to construct a functional data-processing pipeline
-  .pipe(es.map(function( obj ) {
-    obj.i += 1;
-    return obj;
-  })
-  .pipe( new connect.Cursor() ); // write the changes back to the database with a new cursor
-  .on( "finish", function() {
-    console.log( "Done. Everything was saved." );
-  })
-  .end();
+  .on( "data", console.log ) 
+```
+
+###### Insert
+
+Inserting documents involves calling the `write` for each object you wish to write to the database. Once done, call the `end()` method to indicate that no more writes are required. Once everything is saved, the `finish` event will be triggered:
+
+```javascript
+var cursor = new connect.Cursor();
+cursor.write({ name: "Hello" });
+cursor.write({ name: "World" });
+cursor.on("finish", function() {
+  console.log( "Everything was saved" );
+})
+cursor.end()
 ```
 
 #### Cursor
