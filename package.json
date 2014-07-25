@@ -1,0 +1,27 @@
+{
+  "name": "dbstream",
+  "version": "0.0.1",
+  "description": "DatabaseStream API for creating abstract, portable and functional Node streams for accessing databases",
+  "main": "dbstream.js",
+  "scripts": {
+    "test": "node_modules/mocha/bin/mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/avinoamr/dbstream.git"
+  },
+  "keywords": [
+    "database",
+    "stream",
+    "api"
+  ],
+  "author": "Roi Avinoam",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/avinoamr/dbstream/issues"
+  },
+  "homepage": "https://github.com/avinoamr/dbstream",
+  "devDependencies": {
+    "mocha": "^1.21.0"
+  }
+}
