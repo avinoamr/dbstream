@@ -27,6 +27,16 @@ The Cursor is a Node Duplex Stream that represents a database cursor or a single
 * `direction` An integer that defines the sort direction: 1 for ascending (default), -1 for decending
 * Returns the Cursor instance itself
 
+###### .skip(n)
+
+* `n` Number of rows to skip
+* Returns the Cursor instance itself
+
+
+###### .limit(n)
+
+* `n` Number of maximum rows to return
+* Returns Cursor object itself
 
 #### Connection
 
