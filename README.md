@@ -96,26 +96,53 @@ Cursors provide the core functionality of the API. They are simply [Node Streams
 
 * `query` a key-value Object that defines the database query selection
 * Returns the Cursor instance itself
+* Throws an exception if the Cursor has already started reading
 
+Sets the query object of the cursor
 
 ###### .sort(key [, direction])
 
 * `key` A String for the field-name to sort by
 * `direction` An integer that defines the sort direction: 1 for ascending (default), -1 for decending
 * Returns the Cursor instance itself
+* Throws an exception if the Cursor has already started reading
+
+Sets the sort key and direction of the cursor. Can be called multiple times to define multiple sort keys.
 
 ###### .skip(n)
 
 * `n` Number of rows to skip
 * Returns the Cursor instance itself
+* Throws an exception if the Cursor has already started reading
 
+Sets the number of rows that need to be skipped
 
 ###### .limit(n)
 
 * `n` Number of maximum rows to return
 * Returns Cursor object itself
+* Throws an exception if the Cursor has already started reading
 
-#### Connection
+Sets the maximum number of rows to return
+
+###### .write(object, encoding, callback)
+
+* `object` an Object to save. If `id` exists, the operation will be an upsert
+* Returns a boolean indicating if the object was processed internally
+
+See [Node Stream.write()](http://nodejs.org/api/stream.html#stream_writable_write_chunk_encoding_callback)
+
+###### .remove(object, callback)
+
+* `object` an Object to remove. Only relevant when there's an `id` field
+* Returns a boolean indicating if the object was processed internally
+
+Works exactly like `.write`, only removes the object instead of saving it
+
+
+### Connection
+
+The Connection object is the top-most 
 
 ###### module.connect( settings )
 
@@ -123,4 +150,39 @@ Cursors provide the core functionality of the API. They are simply [Node Streams
 * Returns a Connection object 
 
 High-level constructor of the Connection object. 
+
+### Implementation
+
+Any module that implements this API, is dbstreams-compatible, which will make it fully portable across database systems. However, this module provides a skeleton Cursor that you can extend which will make the construction of libraries easier. Your module just needs to implement the `_save`, `_load`, `_remove` and the `connect` method on the module:
+
+```javascript
+var db = require("dbstream");
+var util = require("util");
+
+util.inherits(MyCursor, db.Cursor);
+function MyCursor () {
+  MyCursor.super_.call( this );
+}
+
+MyCursor.prototype._load = function (size) {
+  // read objects from the database, and call this.push( object ) for each one
+  // when you're done reading, call this.push( null )
+  // Use this._query, this._sort, this._skip and this._limit
+}
+
+MyCursor.prototype._save = function (object, callback) {
+  // insert (or upsert, if there's an id)  the object, and call callback() when done
+}
+
+MyCursor.prototype._remove = function (object, callback) {
+  // remove object (preferrably by id) and call callback() when done
+}
+
+module.exports.connect = function( settings ) {
+  return {
+    Cursor: MyCursor // expose the Cursor constructor
+  }
+}
+
+```
 
