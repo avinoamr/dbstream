@@ -67,11 +67,24 @@ Reading objects from the database involves defining the query parameters, and th
 
 
 ```javascript
-cursor.find({ name: "Hello" }).sort( "id" ).skip(1).limit(1);
-cursor.on("data", console.log );
-cursor.on( "end", function() {
-  console.log( "Done reading" );
+cursor.find({ name: "Hello" }).sort("id").skip(1).limit(1);
+cursor.on("data", console.log);
+cursor.on("end", function() {
+  console.log("Done reading");
 });
+```
+
+Because cursors are just Node Streams, you can pipe them together to construct functional data-processing pipelines:
+
+```javascript
+var es = require("event-stream");
+cursor.find({ name: "Hello" })
+  .pipe(es.map(function(obj, callback){
+    obj.name += "!";
+    callback(obj);
+  })
+  .pipe(new Cursor()) // write the modifications back to the database
+  .pipe(process.stdout) // write the saved object to stdout
 ```
 
 
