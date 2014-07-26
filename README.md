@@ -1,7 +1,7 @@
 dbstream
 ========
 
-DatabaseStream API for creating abstract, portable and functional Node streams for accessing databases.
+Database Stream API for creating abstract, portable and functional Node streams for accessing databases.
 
 > Due to the massive fragmentation of Node libraries for accessing different databases, it's difficult to write elegant code that is fully portable across database systems. This API has been designed to encourage similarity between Node modules that are used to access databases. Inspired by [PEP 249](http://legacy.python.org/dev/peps/pep-0249/)
 
@@ -15,8 +15,8 @@ var connection = db.connect( /* settings */ );
 
 // write data
 var cursor = new connect.Cursor(); 
-cursor.write({ name: "Hello" }) // upsert where id == 1
-cursor.write({ name: "World" } // insert
+cursor.write({ name: "Hello" }); // upsert where id == 1
+cursor.write({ name: "World" }); // insert
 cursor.end();
 
 // read data
@@ -96,7 +96,6 @@ Cursors provide the core functionality of the API. They are simply [Node Streams
 
 * `query` a key-value Object that defines the database query selection
 * Returns the Cursor instance itself
-* Throws an exception if the Cursor has already started reading
 
 Sets the query object of the cursor
 
@@ -105,7 +104,6 @@ Sets the query object of the cursor
 * `key` A String for the field-name to sort by
 * `direction` An integer that defines the sort direction: 1 for ascending (default), -1 for decending
 * Returns the Cursor instance itself
-* Throws an exception if the Cursor has already started reading
 
 Sets the sort key and direction of the cursor. Can be called multiple times to define multiple sort keys.
 
@@ -113,7 +111,6 @@ Sets the sort key and direction of the cursor. Can be called multiple times to d
 
 * `n` Number of rows to skip
 * Returns the Cursor instance itself
-* Throws an exception if the Cursor has already started reading
 
 Sets the number of rows that need to be skipped
 
@@ -121,7 +118,6 @@ Sets the number of rows that need to be skipped
 
 * `n` Number of maximum rows to return
 * Returns Cursor object itself
-* Throws an exception if the Cursor has already started reading
 
 Sets the maximum number of rows to return
 
