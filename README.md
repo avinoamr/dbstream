@@ -5,6 +5,11 @@ Database Stream API for creating abstract, portable and functional Node streams 
 
 > Due to the massive fragmentation of Node libraries for accessing different databases, it's difficult to write elegant code that is fully portable across database systems. This API has been designed to encourage similarity between Node modules that are used to access databases. Inspired by [PEP 249](http://legacy.python.org/dev/peps/pep-0249/)
 
+### Available Implementations
+
+* [dbstream-memory](https://github.com/avinoamr/dbstream-memory) Memory-based database API
+* [dbstream-fs](https://github.com/avinoamr/dbstream-fs) File-based database API
+
 ### Usage
 
 This example shows the effectiveness of using Node streams, and the functional, stream-lined API of the `dbstream` API.
