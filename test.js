@@ -1,5 +1,57 @@
-var assert = require( "assert" );
 var dbstream = require( "./dbstream" );
+var stream = require( "stream" );
+var assert = require( "assert" );
+var util = require( "util" );
+
+module.exports = function ( connection ) {
+    util.inherits( Map, stream.Transform );
+    function Map ( fn ) {
+        Map.super_.call( this, { objectMode: true } );
+        this._fn = fn;
+    }
+    Map.prototype._transform = function ( obj, encoding, callback ) {
+        this.push( this._fn( obj ) );
+        callback();
+    }
+
+    return function ( done ) {
+        var cursor = new connection.Cursor();
+
+        // insert the initial data
+        [
+            { name: "Hello", age: 5, id: 1 },
+            { name: "World", age: 8, id: 2 },
+            { name: "Foo", age: 10, id: 3 },
+            { name: "Alice", age: 14 },
+            { name: "Bob", age: 17 },
+            { name: "Charlie", age: 21 }
+        ].forEach( cursor.write, cursor );
+
+        cursor.on( "finish", function () {
+            new connection.Cursor()
+                .find({ age: { $gt: 6, $lt: 20 } })
+                .skip( 1 )
+                .limit( 2 )
+                .pipe(new Map(function ( obj ) {
+                    obj.age *= 2;
+                    return obj;
+                }))
+                .pipe( new connection.Cursor() )
+                .on( "finish", function () {
+                    this.find({ name: "Alice" })
+                        .on( "data", function ( obj ) {
+                            assert( obj.id )
+                            assert.equal( obj.name, "Alice" )
+                            assert.equal( obj.age, 28 );
+                            done();
+                        })
+                })
+        })
+        .end();
+    }
+
+}
+
 
 describe( "DatabaseStream", function () {
 
@@ -117,3 +169,5 @@ describe( "DatabaseStream", function () {
     });
 
 });
+
+
