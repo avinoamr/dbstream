@@ -9,6 +9,7 @@ Database Stream API for creating abstract, portable and functional Node streams 
 
 * [dbstream-memory](https://github.com/avinoamr/dbstream-memory) Memory-based database API
 * [dbstream-fs](https://github.com/avinoamr/dbstream-fs) File-based database API
+* [dbstream-mongo](https://github.com/avinoamr/dbstream-mongo) MongoDB-based database API
 
 ### Usage
 
