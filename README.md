@@ -46,11 +46,13 @@ cursor.find({ name: "Hello" })
 ```
 
 
-### Cursor
+### Class: dbstream.Cursor
 
 Cursors provide the core functionality of the API. They are simply [Node Streams](http://nodejs.org/api/stream.html#stream_class_stream_duplex) that expose an API for defining a Database operation in a DB-agnostic manner:
 
-###### .find(query)
+Cursors represent a single database operation, and are executed lazily when the `cursor.read()` method is executed (or in [flowing mode](http://nodejs.org/api/stream.html#stream_class_stream_readable), when a listener is attached to the `'data'` event)
+
+###### cursor.find(query)
 
 * `query` a key-value Object that defines the database query selection
 * Returns the Cursor instance itself
@@ -58,14 +60,14 @@ Cursors provide the core functionality of the API. They are simply [Node Streams
 Sets the query object of the cursor
 
 ```javascript
-cursor.find({ name: "Hello" }).sort("id").skip(1).limit(1);
+cursor.find({ name: "Hello" });
 cursor.on("data", console.log);
 cursor.on("end", function() {
   console.log("Done reading");
 });
 ```
 
-###### .sort(key [, direction])
+###### cursor.sort(key [, direction])
 
 * `key` A String for the field-name to sort by
 * `direction` An integer that defines the sort direction: 1 for ascending (default), -1 for decending
@@ -73,21 +75,21 @@ cursor.on("end", function() {
 
 Sets the sort key and direction of the cursor. Can be called multiple times to define multiple sort keys.
 
-###### .skip(n)
+###### cursor.skip(n)
 
 * `n` Number of rows to skip
 * Returns the Cursor instance itself
 
 Sets the number of rows that need to be skipped
 
-###### .limit(n)
+###### cursor.limit(n)
 
 * `n` Number of maximum rows to return
 * Returns Cursor object itself
 
 Sets the maximum number of rows to return
 
-###### .write(object, encoding, callback)
+###### cursor.write(object, encoding, callback)
 
 * `object` an Object to save. If `id` exists, the operation will be an upsert
 * Returns a boolean indicating if the object was processed internally
@@ -103,7 +105,7 @@ cursor.on("finish", function() {
 cursor.end()
 ```
 
-###### .remove(object, callback)
+###### cursor.remove(object, callback)
 
 * `object` an Object to remove. Only relevant when there's an `id` field
 * Returns a boolean indicating if the object was processed internally
@@ -117,18 +119,6 @@ cursor.on( "finish", function() {
 });
 cursor.end();
 ```
-
-
-### Connection
-
-The Connection object is the top-most 
-
-###### module.connect( settings )
-
-* `settings` a configuration object defined by the concrete implementation
-* Returns a Connection object 
-
-High-level constructor of the Connection object. 
 
 ### Implementation
 
