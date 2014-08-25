@@ -1,4 +1,4 @@
-dbstream
+Database Stream API Specification for Node.js
 ========
 
 Database Stream API for creating abstract, portable and functional Node streams for accessing databases.
@@ -32,54 +32,6 @@ new connect.Cursor()
   .on( "data", console.log ) 
 ```
 
-###### Insert
-
-Inserting objects involves calling the `write` for each object you wish to write to the database. Once done, call the `end()` method to indicate that no more writes are required. Once everything is saved, the `finish` event will be triggered:
-
-```javascript
-cursor.write({ name: "Hello" });
-cursor.write({ name: "World" });
-cursor.on("finish", function() {
-  console.log( "Everything was saved" );
-})
-cursor.end()
-```
-
-###### Upsert
-
-Updating objects is exactly the same as inserting, except that the object contains an `id` field which will cause the operation to be an upsert:
-
-```javascript
-cursor.write({ id: 1, name: "Hello" });
-cursor.write({ id: 1, name: "World" });
-cursor.end(); // just one object will be saved, "World" will override "Hello"
-```
-
-###### Remove
-
-Similarily, the `remove` command can be used to remove objects:
-
-```javascript
-cursor.remove({ id: 1 });
-cursor.on( "finish", function() {
-  console.log( "ID: 1 was removed" );
-});
-cursor.end();
-```
-
-###### Read
-
-Reading objects from the database involves defining the query parameters, and then reading the results:
-
-
-```javascript
-cursor.find({ name: "Hello" }).sort("id").skip(1).limit(1);
-cursor.on("data", console.log);
-cursor.on("end", function() {
-  console.log("Done reading");
-});
-```
-
 Because cursors are just Node Streams, you can pipe them together to construct functional data-processing pipelines:
 
 ```javascript
@@ -104,6 +56,14 @@ Cursors provide the core functionality of the API. They are simply [Node Streams
 * Returns the Cursor instance itself
 
 Sets the query object of the cursor
+
+```javascript
+cursor.find({ name: "Hello" }).sort("id").skip(1).limit(1);
+cursor.on("data", console.log);
+cursor.on("end", function() {
+  console.log("Done reading");
+});
+```
 
 ###### .sort(key [, direction])
 
@@ -134,12 +94,29 @@ Sets the maximum number of rows to return
 
 See [Node Stream.write()](http://nodejs.org/api/stream.html#stream_writable_write_chunk_encoding_callback)
 
+```javascript
+cursor.write({ name: "Hello" });
+cursor.write({ name: "World", id: 1 }); // upsert
+cursor.on("finish", function() {
+  console.log( "Everything was saved" );
+})
+cursor.end()
+```
+
 ###### .remove(object, callback)
 
 * `object` an Object to remove. Only relevant when there's an `id` field
 * Returns a boolean indicating if the object was processed internally
 
 Works exactly like `.write`, only removes the object instead of saving it
+
+```javascript
+cursor.remove({ id: 1 });
+cursor.on( "finish", function() {
+  console.log( "ID: 1 was removed" );
+});
+cursor.end();
+```
 
 
 ### Connection
