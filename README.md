@@ -52,7 +52,7 @@ Cursors provide the core functionality of the API. They are simply [Node Streams
 
 Cursors represent a single database operation, and are executed lazily when the `cursor.read()` method is executed (or in [flowing mode](http://nodejs.org/api/stream.html#stream_class_stream_readable), when a listener is attached to the `'data'` event)
 
-##### cursor.find(query)
+#### cursor.find(query)
 
 * `query` a key-value Object that defines the database query selection
 * Returns the Cursor instance itself
@@ -67,7 +67,7 @@ cursor.on("end", function() {
 });
 ```
 
-##### cursor.sort(key [, direction])
+#### cursor.sort(key [, direction])
 
 * `key` A String for the field-name to sort by
 * `direction` An integer that defines the sort direction: 1 for ascending (default), -1 for decending
@@ -75,21 +75,21 @@ cursor.on("end", function() {
 
 Sets the sort key and direction of the cursor. Can be called multiple times to define multiple sort keys.
 
-##### cursor.skip(n)
+#### cursor.skip(n)
 
 * `n` Number of rows to skip
 * Returns the Cursor instance itself
 
 Sets the number of rows that need to be skipped
 
-##### cursor.limit(n)
+#### cursor.limit(n)
 
 * `n` Number of maximum rows to return
 * Returns Cursor object itself
 
 Sets the maximum number of rows to return
 
-##### cursor.write(object, encoding, callback)
+#### cursor.write(object, encoding, callback)
 
 * `object` an Object to save. If `id` exists, the operation will be an upsert
 * Returns a boolean indicating if the object was processed internally
@@ -105,7 +105,7 @@ cursor.on("finish", function() {
 cursor.end()
 ```
 
-##### cursor.remove(object, callback)
+#### cursor.remove(object, callback)
 
 * `object` an Object to remove. Only relevant when there's an `id` field
 * Returns a boolean indicating if the object was processed internally
