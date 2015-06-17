@@ -81,7 +81,7 @@ describe( "DatabaseStream", function () {
             { name: "World" }
         ];
         cursor._load = function ( size ) {
-            this.push( data.shift() );
+            this.push( data.shift() || null );
         }
 
         var read = [];
