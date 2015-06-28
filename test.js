@@ -15,16 +15,16 @@ module.exports = function ( connection ) {
     }
 
     return function ( done ) {
+        var out = [], results = [];
         var cursor = new connection.Cursor();
-
-        // insert the initial data
         [
             { name: "Hello", age: 5, id: 1 },
             { name: "World", age: 8, id: 2 },
             { name: "Foo", age: 10, id: 3 },
             { name: "Alice", age: 14 },
             { name: "Bob", age: 17 },
-            { name: "Charlie", age: 21 }
+            { name: "Charlie", age: 21 },
+            { name: "David", age: 10 }
         ].forEach( cursor.write, cursor );
 
         cursor.on( "finish", function () {
@@ -32,17 +32,30 @@ module.exports = function ( connection ) {
                 .find({ age: { $gt: 6, $lt: 20 } })
                 .skip( 1 )
                 .limit( 2 )
+                .sort( "name" )
+                .on( "data", out.push.bind( out ) )
                 .pipe(new Map(function ( obj ) {
-                    obj.age *= 2;
-                    return obj;
+                    return { id: obj.id, name: obj.name, age: obj.age * 2 }
                 }))
                 .pipe( new connection.Cursor() )
                 .on( "finish", function () {
-                    this.find({ name: "Alice" })
-                        .on( "data", function ( obj ) {
-                            assert( obj.id )
-                            assert.equal( obj.name, "Alice" )
-                            assert.equal( obj.age, 28 );
+                    this.find({})
+                        .sort( "age", -1 )
+                        .on( "data", results.push.bind( results) )
+                        .on( "end", function () {
+                            assert.deepEqual( out, [
+                                { name: "Bob", age: 17, id: out[ 0 ].id },
+                                { name: "David", age: 10, id: out[ 1 ].id },
+                            ]);
+                            assert.deepEqual( results, [
+                                { name: "Bob", age: 34, id: results[ 0 ].id },
+                                { name: "Charlie", age: 21, id: results[ 1 ].id },
+                                { name: "David", age: 20, id: results[ 2 ].id },
+                                { name: "Alice", age: 14, id: results[ 3 ].id },
+                                { name: "Foo", age: 10, id: 3 },
+                                { name: "World", age: 8, id: 2 },
+                                { name: "Hello", age: 5, id: 1 },
+                            ])
                             done();
                         })
                 })
