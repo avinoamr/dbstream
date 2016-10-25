@@ -1,6 +1,6 @@
 {
   "name": "dbstream",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "DatabaseStream API for creating abstract, portable and functional Node streams for accessing databases",
   "main": "dbstream.js",
   "scripts": {

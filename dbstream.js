@@ -56,5 +56,13 @@ Cursor.prototype.limit = function ( n ) {
     return this;
 }
 
+Cursor.prototype.copy = function(other) {
+    this._query = other._query
+    this._sort = other._sort
+    this._skip = other._skip
+    this._limit = other._limit
+    return this
+}
+
 
 module.exports.Cursor = Cursor;

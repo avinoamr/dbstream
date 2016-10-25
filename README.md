@@ -122,6 +122,13 @@ cursor.on( "finish", function() {
 cursor.end();
 ```
 
+#### cursor.copy(other)
+
+* `other` is another dbstream Cursor
+* Returns the Cursor instance itself 
+
+Copies the query information from the `other` cursor into the current one.
+
 ### Implementation
 
 Any module that implements this API, is dbstreams-compatible, which will make it fully portable across database systems. However, this module provides a skeleton Cursor that you can extend which will make the construction of libraries easier. Your module just needs to implement the `_save`, `_load`, `_remove` and the `connect` method on the module:
